@@ -105,7 +105,9 @@ axis(1, at=at, labels=format(at, "%H:%M"))
 **2) Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?**
 
 ```{r avg5Min_max}
-avg5[which.max(avg5$meanSteps),]
+avg5.max <- avg5[which.max(avg5$meanSteps),]
+avg5.max[1] <- format(avg5.max[1], "%H:%M")
+avg5.max
 ```
 
 ## Imputing missing values
@@ -119,7 +121,7 @@ sum(is.na(activity$steps))
 
 **2) Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.**
 
-I will use the rounded mean for the 5-minute interval across all days. If you'll recall the work above for the average daily activity pattern, the interval means were calculated with NAs stripped. I think this will be a fine estimate for actual values.
+I will use the mean for the 5-minute interval across all days, rounded to the nearest whole step. If you'll recall the work above for the average daily activity pattern, the interval means were calculated with NAs stripped. I think this will be a fine estimate for actual values.
 
 To do this, I'll filter the dataset down to just observations with missing values, fill in the missing values with results from the previously-created `avg5` dataset by interval, and merge this resulting dataset back with the original observations that were not missing values.
 
@@ -149,7 +151,7 @@ summarise(aspd, mean(stepsPerDay), median(stepsPerDay))
 
 These values expectedly differ from the estimates created in the first part of the assignment. Previously, the mean total steps per day was skewed downwards due to the missing values being treated as `0`s, which pulled the mean lower than the median. 
 
-Imputing the missing values with the mean steps by interval brings the total mean value back up. This new mean is now much closer to the median estimate than before. 
+Imputing the missing values with the mean steps by interval brings the total mean steps per day back up. This new mean is now much closer to the median estimate than before.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 

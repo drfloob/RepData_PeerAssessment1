@@ -102,7 +102,7 @@ plot(x=avg5$interval, y=avg5$meanSteps, type="l",
 
 ![](PA1_template_files/figure-html/bad_avg5Min-1.png)
 
-Notice the large horizontal jump between 55 and 100?  To account for this, I recoded the interval values into true date-time values, which can be translated back into the original identifiers if need be.
+Notice the large horizontal jump between 55 and 100?  To correct for this, I recoded the interval values into true date-time values, which can be translated back into the original identifiers if need be.
 
 
 ```r
@@ -143,15 +143,17 @@ axis(1, at=at, labels=format(at, "%H:%M"))
 
 
 ```r
-avg5[which.max(avg5$meanSteps),]
+avg5.max <- avg5[which.max(avg5$meanSteps),]
+avg5.max[1] <- format(avg5.max[1], "%H:%M")
+avg5.max
 ```
 
 ```
 ## Source: local data frame [1 x 2]
 ## 
-##              interval meanSteps
-##                (time)     (dbl)
-## 1 2016-05-05 08:35:00  206.1698
+##   interval meanSteps
+##     (AsIs)     (dbl)
+## 1    08:35  206.1698
 ```
 
 ## Imputing missing values
@@ -170,7 +172,7 @@ sum(is.na(activity$steps))
 
 **2) Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.**
 
-I will use the rounded mean for the 5-minute interval across all days. If you'll recall the work above for the average daily activity pattern, the interval means were calculated with NAs stripped. I think this will be a fine estimate for actual values.
+I will use the mean for the 5-minute interval across all days, rounded to the nearest whole step. If you'll recall the work above for the average daily activity pattern, the interval means were calculated with NAs stripped. I think this will be a fine estimate for actual values.
 
 To do this, I'll filter the dataset down to just observations with missing values, fill in the missing values with results from the previously-created `avg5` dataset by interval, and merge this resulting dataset back with the original observations that were not missing values.
 
@@ -235,7 +237,7 @@ summarise(aspd, mean(stepsPerDay), median(stepsPerDay))
 
 These values expectedly differ from the estimates created in the first part of the assignment. Previously, the mean total steps per day was skewed downwards due to the missing values being treated as `0`s, which pulled the mean lower than the median. 
 
-Imputing the missing values with the mean steps by interval brings the total mean value back up. This new mean is now much closer to the median estimate than before. 
+Imputing the missing values with the mean steps by interval brings the total mean steps per day back up. This new mean is now much closer to the median estimate than before.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
